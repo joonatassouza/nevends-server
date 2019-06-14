@@ -2,6 +2,7 @@ const Post = require('../models/Post');
 const sharp = require('sharp');
 const path = require('path');
 const fs = require('fs');
+const imgur = require('imgur');
 
 module.exports = {
     async index(req, res) {
@@ -12,27 +13,24 @@ module.exports = {
 
     async store(req, res) {
         const { author, place, description, hashtags } = req.body;
-        const {filename: image } = req.file;
 
-        const [name] = image.split('.');
-        const fileName = `${name.split(' ').join('_')}.jpg`;
+        const resizedImageBuf = await sharp(req.file.path).resize(500).jpeg({ quality: 70 }).toBuffer();
 
-        //await sharp(req.file.path)
-        //    .resize(500)
-        //    .jpeg({ quality: 70 })
-        //    .toFile(path.resolve(req.file.destination, 'resized', fileName));
-//
-        //fs.unlinkSync(req.file.path);
+        const image64 = resizedImageBuf.toString('base64');
 
+        fs.unlinkSync(req.file.path);
+
+        const { data } = await imgur.uploadBase64(image64);
+            
         const post = await Post.create({
             author,
             place,
             description,
             hashtags,
-            image: fileName
+            imageUrl: fileName
         });
-
-        req.io.emit('post', post);
+                
+        req.io.emit('post', data.link);
 
         return res.json(post);
     },
