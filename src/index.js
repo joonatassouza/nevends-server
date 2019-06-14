@@ -12,7 +12,7 @@ mongoose.connect('mongodb+srv://week:week@cluster0-e0uv3.mongodb.net/test?retryW
     useNewUrlParser: true
 });
 
-app.use(cors());
+app.use(cors( { origin: 'https://istagrado.herokuapp.com'} ));
 
 app.use((req, res, next) => {
     req.io = io;
