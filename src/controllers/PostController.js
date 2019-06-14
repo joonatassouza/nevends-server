@@ -27,10 +27,10 @@ module.exports = {
             place,
             description,
             hashtags,
-            imageUrl: fileName
+            imageUrl: data.link
         });
                 
-        req.io.emit('post', data.link);
+        req.io.emit('post', post);
 
         return res.json(post);
     },
