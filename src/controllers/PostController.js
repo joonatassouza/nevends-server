@@ -37,8 +37,6 @@ module.exports = {
 
     async delete(req, res) {
         const post = await Post.findByIdAndDelete(req.params.id);
-        
-        fs.unlinkSync(path.resolve(__dirname, '..', '..', 'uploads', 'resized', post.image));
 
         req.io.emit('post', post);
 
