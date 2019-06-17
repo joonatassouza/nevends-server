@@ -1,6 +1,5 @@
 const Post = require('../models/Post');
 const sharp = require('sharp');
-const path = require('path');
 const fs = require('fs');
 const imgur = require('imgur');
 
@@ -38,8 +37,21 @@ module.exports = {
     async delete(req, res) {
         const post = await Post.findByIdAndDelete(req.params.id);
 
-        req.io.emit('post', post);
+        req.io.emit('delete', post._id);
 
         return res.send();
+    },
+
+    async comment(req, res) {
+
+        const post = await Post.findById(req.params.id);
+
+        post.comments.push({ text: req.body.comment });
+
+        await post.save();
+
+        req.io.emit('comment', post);
+
+        return res.json(post);
     }
 };

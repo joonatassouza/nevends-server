@@ -16,7 +16,7 @@ module.exports = {
     async dislike(req, res) {
         const post = await Post.findById(req.params.id);
 
-        post.likes--;
+        post.dislikes++;
 
         await post.save();
 
